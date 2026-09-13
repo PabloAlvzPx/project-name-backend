@@ -13,7 +13,7 @@
     "no-restricted-syntax": [
       "error",
       {
-        "selector": "Program > Comment[value~='(?i)eslint-disable']",
+        "selector": "Program > Comment[value=/eslint-disable/i]",
         "message": "Las reglas eslint-disable están estrictamente prohibidas por la rúbrica."
       }
     ]

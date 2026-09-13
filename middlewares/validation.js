@@ -1,11 +1,11 @@
-const { celebrate, Joi } = require("celebrate");
-const validator = require("validator");
+const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
-  return helpers.message("Debe ser una URL válida");
+  return helpers.message('Debe ser una URL válida');
 };
 
 const validateUserBody = celebrate({

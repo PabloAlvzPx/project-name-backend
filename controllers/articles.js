@@ -30,15 +30,16 @@ const deleteArticle = (req, res, next) => {
     .select('+owner')
     .then((article) => {
       if (!article) {
-        return res.status(404).send({ message: 'Artículo no encontrado' });
+        const error = new Error('Artículo no encontrado');
+        error.statusCode = 404;
+        return next(error);
       }
       if (article.owner.toString() !== req.user._id) {
-        return res
-          .status(403)
-          .send({
-            message:
-              'Prohibido: No puedes eliminar artículos de otros usuarios',
-          });
+        const error = new Error(
+          'Prohibido: No puedes eliminar artículos de otros usuarios',
+        );
+        error.statusCode = 403;
+        return next(error);
       }
 
       return Article.findByIdAndDelete(req.params.articleId).then(() => res.send({ message: 'Artículo eliminado con éxito' }));

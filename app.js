@@ -25,8 +25,10 @@ app.use(express.json());
 
 app.use('/', routes);
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Ruta no encontrada' });
+app.use((req, res, next) => {
+  const error = new Error('Ruta no encontrada');
+  error.statusCode = 404;
+  next(error);
 });
 
 app.use(errorLogger);

@@ -7,7 +7,9 @@ const JWT_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRE
 const getCurrentUser = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
     if (!user) {
-      return res.status(404).send({ message: 'Usuario no encontrado' });
+      const error = new Error('Usuario no encontrado');
+      error.statusCode = 404;
+      return next(error);
     }
     return res.send(user);
   })
@@ -26,9 +28,9 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'MongoServerError' && err.code === 11000) {
-        return res
-          .status(409)
-          .send({ message: 'El correo electrónico ya está registrado' });
+        const error = new Error('El correo electrónico ya está registrado');
+        error.statusCode = 409;
+        return next(error);
       }
       return next(err);
     });
@@ -44,17 +46,7 @@ const login = (req, res, next) => {
       });
       return res.send({ token });
     })
-    .catch((err) => {
-      if (
-        err.message === 'Incorrect email or password'
-        || err.message === 'Credenciales incorrectas'
-      ) {
-        const error = new Error('Credenciales incorrectas');
-        error.statusCode = 401;
-        return next(error);
-      }
-      return next(err);
-    });
+    .catch(next);
 };
 
 module.exports = { getCurrentUser, createUser, login };
